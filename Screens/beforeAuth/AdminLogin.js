@@ -9,6 +9,8 @@ import { View, Image, StyleSheet, Alert, LogBox } from "react-native";
 import { colors } from "../../constants/style/theme";
 import firebase, { firestore } from "firebase";
 import firebaseConfig from "../../fireBaseWebConfig";
+import { useDispatch } from "react-redux";
+import * as AdminActions from "../../Store/Actions/AdminActions";
 
 import "firebase/firestore";
 
@@ -20,12 +22,10 @@ import {
   Divider,
 } from "../../components/helpingComponents";
 
-import AdminLoginCom from "../../components/admin/AdminLoginCom.js";
-
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-// LogBox.ignoreLogs(["Setting a timer"]);
+LogBox.ignoreLogs(["Setting a timer"]);
 
 const FORM_INPUT_UPDTAE = "FORM_INPUT_UPDATE";
 
@@ -60,6 +60,7 @@ const AdminLogin = (props) => {
   const [isLoading, setIsloading] = useState(false);
 
   let db = firestore();
+  const dispatch = useDispatch();
 
   const [formState, dispatchInput] = useReducer(formReducer, {
     inputValue: {
@@ -108,13 +109,38 @@ const AdminLogin = (props) => {
     a.where("UserName", "==", formState.inputValue.userName)
       .where("Password", "==", formState.inputValue.password)
       .get()
-      .then((querySnapshot) => {
+      .then(async (querySnapshot) => {
         if (querySnapshot.size > 0) {
           console.log("Logged In");
-          props.navigation.navigate("adminProfile");
+          let id;
+          let data;
+          querySnapshot.forEach((doc) => {
+            id = doc.id;
+            data = doc.data();
+          });
+          console.log(id);
+          await dispatch(
+            AdminActions.adminAuth(
+              props.navigation,
+              formState.inputValue.userName,
+              id
+            )
+          );
+          // props.navigation.navigate("adminProfile");
         } else {
           console.log("Invalid Credentials");
-          Alert.alert("Inavalid credentials","Please enter valid credentials",[{text:"okay" , onPress:()=>{console.log("Cancel")} }])
+          Alert.alert(
+            "Inavalid credentials",
+            "Please enter valid credentials",
+            [
+              {
+                text: "okay",
+                onPress: () => {
+                  console.log("Cancel");
+                },
+              },
+            ]
+          );
         }
       })
       .catch((error) => {

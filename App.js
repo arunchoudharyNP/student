@@ -8,21 +8,24 @@ import * as Font from "expo-font";
 import { enableScreens } from "react-native-screens";
 import AppLoading from "expo-app-loading";
 
+import AdminReducers from "./Store/Reducers/AdminReducers";
+import { Provider as StoreProvider } from "react-redux";
+
 import RootNavigator from "./navigations/RootNavigator";
 
-// import { createStore, combineReducers, applyMiddleware } from "redux";
-// import ReduxThunk from "redux-thunk";
-
-// import { RootNavigator } from "./Navigations/index";
+import { createStore, combineReducers, applyMiddleware } from "redux";
+import ReduxThunk from "redux-thunk";
 
 enableScreens();
 
+export const reducer = combineReducers({
+  AuthAdmin: AdminReducers,
+});
 
-// export const reducer = combineReducers({
-//   Auth:authReducer
-// })
-
-// const store = createStore(reducer,composeWithDevTools(applyMiddleware(ReduxThunk)));
+const store = createStore(
+  reducer,
+  applyMiddleware(ReduxThunk)
+);
 
 export default function App() {
   const [loadState, setloadState] = useState(false);
@@ -63,9 +66,11 @@ export default function App() {
   }
 
   return (
-    <RootNavigator>
-      <StatusBar style="transparent" />
-    </RootNavigator>
+    <StoreProvider store={store}>
+      <RootNavigator>
+        <StatusBar style="transparent" />
+      </RootNavigator>
+    </StoreProvider>
   );
 }
 
