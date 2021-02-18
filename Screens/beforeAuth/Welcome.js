@@ -288,12 +288,14 @@ Welcome.defaultProps = {
   illustrations: [
     {
       id: 1,
-      source: require("../../assets/images/A.png"),
+      // source: require("../../assets/images/A.png"),
+      source :{ uri: 'https://media.giphy.com/media/e81G1AOXdQpmgYKLPq/giphy.gif'},
       text: "Text to describe your application",
     },
     {
       id: 2,
-      source: require("../../assets/images/B.png"),
+      // source: require("../../assets/images/B.png"),
+      source:{uri:"https://media.giphy.com/media/ZFKaOsucd3qqcvrKMQ/giphy.gif"},
       text: "Text to describe your application",
     },
     {

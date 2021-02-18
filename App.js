@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
@@ -22,10 +22,7 @@ export const reducer = combineReducers({
   AuthAdmin: AdminReducers,
 });
 
-const store = createStore(
-  reducer,
-  applyMiddleware(ReduxThunk)
-);
+const store = createStore(reducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
   const [loadState, setloadState] = useState(false);
@@ -45,11 +42,15 @@ export default function App() {
   }
 
   const handleResourcesAsync = async () => {
-    const imageAssets = cacheImages([]);
+    const imageAssets = cacheImages([
+      "https://media.giphy.com/media/e81G1AOXdQpmgYKLPq/giphy.gif",
+      "https://media.giphy.com/media/ZFKaOsucd3qqcvrKMQ/giphy.gif",
+    ]);
 
     const fontAssets = cacheFonts([
       { "open-sans": require("./assets/fonts/OpenSans-Regular.ttf") },
       { "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf") },
+      {"Caveat" : require('./assets/fonts/Caveat-VariableFont_wght.ttf')}
     ]);
 
     return Promise.all([...imageAssets, ...fontAssets]);
