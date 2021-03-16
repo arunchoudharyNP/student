@@ -7,18 +7,19 @@ import { firestore } from "firebase";
 
 const UserProfile = (props) => {
   const db = firestore();
+  const parent = props.navigation.dangerouslyGetParent();
 
   const { name } = props.route.params;
   const [listners, setlistners] = useState([]);
 
   const startChat = (id) => {
-    const chatRef = db
-      .collection("ServiceAccount")
-      .doc(id)
-      .collection(name + "-room");
+    // const chatRef = db
+    //   .collection("ServiceAccount")
+    //   .doc(id)
+    //   .collection(name + "-room");
 
-    chatRef.doc("ChatRoom");
-    props.navigation.navigate("chatScreen", id);
+    // chatRef.doc("ChatRoom");
+    props.navigation.navigate("chatScreen", { id,room:name });
   };
 
   const loadListners = () => {
@@ -40,7 +41,7 @@ const UserProfile = (props) => {
   };
   useLayoutEffect(() => {
     loadListners();
-    props.navigation.setOptions({
+    parent.setOptions({
       headerLeft: () => {
         return (
           <TouchableOpacity>
@@ -48,7 +49,7 @@ const UserProfile = (props) => {
               name="md-menu"
               size={36}
               onPress={() => {
-                props.navigation.openDrawer();
+                parent.openDrawer();
               }}
               color="white"
               style={{ marginLeft: 20, marginTop: 5 }}

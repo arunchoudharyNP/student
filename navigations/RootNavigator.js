@@ -26,6 +26,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import UserProfile from "../Screens/afterAuth/User/UserProfile";
 import UserDrawerCom from "../components/navigation/UserDrawerCom";
 import ChatScreen from "../Screens/afterAuth/User/ChatScreen";
+import ChatRoomsScreen from "../Screens/afterAuth/User/ChatRoomsScreen";
 
 const RootNavigator = (props) => {
   const navigationRef = useRef();
@@ -34,6 +35,8 @@ const RootNavigator = (props) => {
   const RootNav = createStackNavigator();
   const TabNav = createBottomTabNavigator();
   const AdminHome = createStackNavigator();
+  const UserStack = createStackNavigator();
+  const UserBottomTab = createBottomTabNavigator();
 
   const [adminUserName, setadminUserName] = useState("");
   const [adminDocId, setadminDocId] = useState("");
@@ -92,8 +95,8 @@ const RootNavigator = (props) => {
   useEffect(() => {
     console.log("UseEffect called");
 
-    getAdminAuthData();
-    getUserAuthData();
+    const a = getAdminAuthData();
+    const b = getUserAuthData();
   }, [adminUserName, adminDocId, userName]);
 
   const headerLogo = () => {
@@ -227,6 +230,75 @@ const RootNavigator = (props) => {
     );
   };
 
+  const UserTabNavigation = () => {
+    return (
+      <UserBottomTab.Navigator
+        screenOptions={({ route }) => ({
+          title: route.name.toUpperCase(),
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === "users") {
+              iconName = focused ? "account-group" : "account-group-outline";
+              return (
+                <MaterialCommunityIcons
+                  name={iconName}
+                  size={size}
+                  color={color}
+                />
+              );
+            } else if (route.name === "chatRooms") {
+              iconName = focused
+                ? "chat-processing"
+                : "chat-processing-outline";
+              return (
+                <MaterialCommunityIcons
+                  name={iconName}
+                  size={size}
+                  color={color}
+                />
+              );
+            }
+
+            // You can return any component that you like here!
+          },
+        })}
+        tabBarOptions={{
+          activeTintColor: "#044b59",
+          inactiveTintColor: "gray",
+        }}
+      >
+        <UserBottomTab.Screen
+          name="users"
+          component={UserProfile}
+          initialParams={{ name: userName }}
+          // initialParams={{ docId: adminDocId }}
+        />
+        <UserBottomTab.Screen name="chatRooms" component={ChatRoomsScreen} />
+      </UserBottomTab.Navigator>
+    );
+  };
+
+  const UserNavigation = () => {
+    return (
+      <UserStack.Navigator>
+        <UserStack.Screen
+          component={UserTabNavigation}
+          name="userProfile"
+         
+          options={{
+            headerShown: true,
+            headerTitle: headerLogo,
+            headerStyle: {
+              backgroundColor: "#044b59",
+            },
+          }}
+        />
+        <UserStack.Screen name="chatScreen" component={ChatScreen} />
+      </UserStack.Navigator>
+    );
+  };
+
   const AdminStack = () => {
     return (
       <DrawerNav.Navigator
@@ -240,7 +312,7 @@ const RootNavigator = (props) => {
     );
   };
 
-  const UserStack = () => {
+  const UserNav = () => {
     return (
       <DrawerNav.Navigator
         drawerContent={(props) => (
@@ -249,26 +321,18 @@ const RootNavigator = (props) => {
       >
         <DrawerNav.Screen
           name="userProfile"
-          component={UserProfile}
-          initialParams={{ name: userName }}
-          options={{
-            headerShown: true,
-            headerTitle: headerLogo,
-            headerStyle: {
-              backgroundColor: "#044b59",
-            },
-            // headerBackground: () => (
-            //   <LinearGradient
-            //     colors={["blue", "#10356c"]}
-            //     style={{ flex: 1 }}
-            //     start={{ x: 0, y: 0.2 }}
-            //     end={{ x: 0, y: 1 }}
-            //   />
-            // ),
-          }}
+          component={UserNavigation}
+
+          // headerBackground: () => (
+          //   <LinearGradient
+          //     colors={["blue", "#10356c"]}
+          //     style={{ flex: 1 }}
+          //     start={{ x: 0, y: 0.2 }}
+          //     end={{ x: 0, y: 1 }}
+          //   />
+          // ),
         />
         <DrawerNav.Screen name="verify" component={Verify} />
-        <DrawerNav.Screen name="chatScreen" component={ChatScreen} />
       </DrawerNav.Navigator>
     );
   };
@@ -285,7 +349,7 @@ const RootNavigator = (props) => {
         }
       }}
     >
-      {adminData ? <AdminStack /> : userData ? <UserStack /> : <AuthStack />}
+      {adminData ? <AdminStack /> : userData ? <UserNav /> : <AuthStack />}
     </NavigationContainer>
   );
 };
