@@ -23,11 +23,13 @@ import CreateUsers from "../Screens/afterAuth/Admin/CreateUsers";
 import Users from "../Screens/afterAuth/Admin/Users";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import UserProfile from "../Screens/afterAuth/User/UserProfile";
+import UserDrawerCom from "../components/navigation/UserDrawerCom";
+import ChatScreen from "../Screens/afterAuth/User/ChatScreen";
 
 const RootNavigator = (props) => {
   const navigationRef = useRef();
-  const [isUserLogged, setisUserLogged] = useState(false);
-  const [isAdminLogged, setisAdminLogged] = useState(false);
+
   const DrawerNav = createDrawerNavigator();
   const RootNav = createStackNavigator();
   const TabNav = createBottomTabNavigator();
@@ -37,11 +39,18 @@ const RootNavigator = (props) => {
   const [adminDocId, setadminDocId] = useState("");
   const [adminData, setadminData] = useState(false);
 
+  const [userName, setuserName] = useState("");
+  const [userData, setuserData] = useState(false);
+
   const getUpdatedStateAdmin = () => {
     console.log("State updated");
     if (adminDocId) {
       setadminUserName(null);
       setadminDocId(null);
+    }
+
+    if (userName) {
+      setuserName(null);
     }
   };
 
@@ -63,11 +72,29 @@ const RootNavigator = (props) => {
       });
   };
 
+  const getUserAuthData = async () => {
+    setuserData(false);
+    AsyncStorage.getItem("userData")
+      .then(function (userData) {
+        console.log("userData ....." + userData);
+        const transformedData = JSON.parse(userData);
+        if (transformedData) {
+          setuserName(transformedData.userName);
+          setuserData(true);
+        }
+      })
+      .catch(function (error) {
+        console.log("Error " + error);
+        setuserData(false);
+      });
+  };
+
   useEffect(() => {
     console.log("UseEffect called");
 
     getAdminAuthData();
-  }, [adminUserName, adminDocId]);
+    getUserAuthData();
+  }, [adminUserName, adminDocId, userName]);
 
   const headerLogo = () => {
     return (
@@ -76,12 +103,12 @@ const RootNavigator = (props) => {
           style={styles.logoImage}
           source={require("../assets/images/appLogo.png")}
         />
-        <Text style={styles.logoTitle}>Frinds</Text>
+        <Text style={styles.logoTitle}>Friends</Text>
       </View>
     );
   };
 
-  const BottomTab = () => {
+  const BottomTabAdmin = () => {
     return (
       <TabNav.Navigator
         screenOptions={({ route }) => ({
@@ -127,7 +154,11 @@ const RootNavigator = (props) => {
           inactiveTintColor: "gray",
         }}
       >
-        <TabNav.Screen name="home" component={AdminProfile} />
+        <TabNav.Screen
+          name="home"
+          component={AdminProfile}
+          initialParams={{ docId: adminDocId }}
+        />
         <TabNav.Screen name="create" component={CreateUsers} />
         <TabNav.Screen name="users" component={Users} />
       </TabNav.Navigator>
@@ -139,7 +170,7 @@ const RootNavigator = (props) => {
       <AdminHome.Navigator>
         <AdminHome.Screen
           name="adminMain"
-          component={BottomTab}
+          component={BottomTabAdmin}
           options={{
             headerTitle: headerLogo,
             // headerStyle: {
@@ -211,9 +242,33 @@ const RootNavigator = (props) => {
 
   const UserStack = () => {
     return (
-      <DrawerNav.Navigator>
-        <DrawerNav.Screen name="dashboardScreen" component={DashboardScreen} />
+      <DrawerNav.Navigator
+        drawerContent={(props) => (
+          <UserDrawerCom {...props} name={userName} picture={null} />
+        )}
+      >
+        <DrawerNav.Screen
+          name="userProfile"
+          component={UserProfile}
+          initialParams={{ name: userName }}
+          options={{
+            headerShown: true,
+            headerTitle: headerLogo,
+            headerStyle: {
+              backgroundColor: "#044b59",
+            },
+            // headerBackground: () => (
+            //   <LinearGradient
+            //     colors={["blue", "#10356c"]}
+            //     style={{ flex: 1 }}
+            //     start={{ x: 0, y: 0.2 }}
+            //     end={{ x: 0, y: 1 }}
+            //   />
+            // ),
+          }}
+        />
         <DrawerNav.Screen name="verify" component={Verify} />
+        <DrawerNav.Screen name="chatScreen" component={ChatScreen} />
       </DrawerNav.Navigator>
     );
   };
@@ -226,16 +281,11 @@ const RootNavigator = (props) => {
         if (currentRouteName === "verify") {
           getUpdatedStateAdmin();
           getAdminAuthData();
+          getUserAuthData();
         }
       }}
     >
-      {adminData ? (
-        <AdminStack />
-      ) : isUserLogged ? (
-        <UserStack />
-      ) : (
-        <AuthStack />
-      )}
+      {adminData ? <AdminStack /> : userData ? <UserStack /> : <AuthStack />}
     </NavigationContainer>
   );
 };

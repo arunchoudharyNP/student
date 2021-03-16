@@ -5,7 +5,7 @@ import React, {
   useReducer,
   useRef,
 } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Alert } from "react-native";
 import { colors } from "../../constants/style/theme";
 
 import {
@@ -15,6 +15,9 @@ import {
   Button,
   Divider,
 } from "../../components/helpingComponents";
+import firebase, { firestore } from "firebase";
+import firebaseConfig from "../../fireBaseWebConfig";
+import { ScrollView } from "react-native-gesture-handler";
 
 const FORM_INPUT_UPDTAE = "FORM_INPUT_UPDATE";
 
@@ -44,7 +47,19 @@ const formReducer = (state, action) => {
   return state;
 };
 
+const alert = (message) => {
+  return Alert.alert("Error Occurred", message, [
+    {
+      text: "Cancel",
+      onPress: () => console.log("Cancel Pressed"),
+      style: "cancel",
+    },
+    { text: "OK", onPress: () => console.log("OK Pressed") },
+  ]);
+};
+
 const SignUpScreen = (props) => {
+  const db = firestore();
   const [error, setError] = useState();
   const [isLoading, setIsloading] = useState(false);
 
@@ -52,15 +67,83 @@ const SignUpScreen = (props) => {
     inputValue: {
       userName: "",
       password: "",
+      ID: "",
       OTP: "",
     },
     inputValidities: {
       userName: false,
       password: false,
+      ID: false,
       OTP: false,
     },
     formIsValid: false,
   });
+
+  const signUP = () => {
+    console.log(formState.inputValue.OTP);
+    const adminCollection = db
+      .collection("AdminAccount")
+      .doc(formState.inputValue.ID)
+      .collection("GeneratedOTP");
+
+    const userRef = db.collection("UserCred");
+
+    userRef
+      .where("OTP", "==", formState.inputValue.OTP)
+      .get()
+      .then((data) => {
+        if (data.size == 0) {
+          adminCollection
+            .where("userOTP", "array-contains", formState.inputValue.OTP)
+            .get()
+            .then((querySnap) => {
+              let id;
+              let data;
+              if (querySnap.size > 0) {
+                querySnap.forEach((doc) => {
+                  id = doc.id;
+                  data = doc.data();
+                });
+
+                adminCollection.doc(id).update({
+                  login: firebase.firestore.FieldValue.increment(1),
+                });
+
+                db.collection("UserCred").add({
+                  userName: formState.inputValue.userName,
+                  password: formState.inputValue.password,
+                  ID: formState.inputValue.ID,
+                  OTP: formState.inputValue.OTP,
+                });
+                Alert.alert("Successfully Registered", "Click Ok to Login", [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel",
+                  },
+                  {
+                    text: "OK",
+                    onPress: () => props.navigation.navigate("loginScreen"),
+                  },
+                ]);
+
+                console.log(id);
+                console.log(data);
+              } else {
+                console.log("Not Found");
+                alert("Credentials is Incorrect");
+              }
+            });
+        } else {
+          alert("Already Registered");
+          console.log("Already Registered");
+        }
+      });
+
+    // console.log(".......Result.....");
+    // console.log(result);
+    // console.log("..........");
+  };
 
   function useIsMountedRef() {
     const isMountedRef = useRef(null);
@@ -93,13 +176,13 @@ const SignUpScreen = (props) => {
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text
         h1
         bold
         center
         style={{
-          marginTop: 120,
+          marginTop: 60,
           marginBottom: 30,
           fontFamily: "open-sans-bold",
         }}
@@ -108,12 +191,10 @@ const SignUpScreen = (props) => {
       </Text>
 
       <Input
-        id="username"
+        id="userName"
         required
         LeftValue="user"
         vectorIcon="AntDesign"
-        minLength={10}
-        maxLength={10}
         errorText="Please enter correct username"
         label="User Name"
         placeholder="Enter any username name "
@@ -141,7 +222,21 @@ const SignUpScreen = (props) => {
       />
 
       <Input
-        id="otp"
+        id="ID"
+        required
+        errorText="Please enter a valid ID"
+        LeftValue="unlock"
+        vectorIcon="Feather"
+        label="ID"
+        placeholder="Type your ID"
+        style={styles.inputFeild}
+        onInputChanges={signupHandler}
+        initialValue=""
+        initiallyValid={false}
+      />
+
+      <Input
+        id="OTP"
         required
         minLength={5}
         errorText="Please enter a valid OTP"
@@ -169,8 +264,9 @@ const SignUpScreen = (props) => {
           startColor={colors.accent}
           endColor={colors.primary}
           style={styles.button}
-          onPress={() => {}}
-          
+          onPress={() => {
+            formState.inputValue.OTP && signUP();
+          }}
         >
           <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
             Sign Up
@@ -190,7 +286,7 @@ const SignUpScreen = (props) => {
         startColor={colors.accent}
         endColor={colors.primary}
         style={styles.button}
-        onPress={()=>props.navigation.navigate("loginScreen")}
+        onPress={() => props.navigation.navigate("loginScreen")}
       >
         <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
           Sign In
@@ -202,13 +298,13 @@ const SignUpScreen = (props) => {
         startColor={"#107278"}
         endColor={"#03939C"}
         style={styles.button}
-        onPress={()=>props.navigation.navigate("adminLogin")}
+        onPress={() => props.navigation.navigate("adminLogin")}
       >
         <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
           Login as Admin
         </Text>
       </Button>
-    </View>
+    </ScrollView>
   );
 };
 

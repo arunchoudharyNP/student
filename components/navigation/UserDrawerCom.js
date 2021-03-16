@@ -2,7 +2,7 @@ import React from "react";
 import { Text, View, Image } from "react-native";
 
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
-import * as actions from "../../Store/Actions/AdminActions";
+import * as actions from "../../Store/Actions/UsersActions";
 import { colors } from "../../constants/style/theme";
 import { useDispatch } from "react-redux";
 import { Drawer } from "react-native-paper";
@@ -13,7 +13,7 @@ import {
 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 
-const CustomDrawerComponent = (props) => {
+const UserDrawerCom = (props) => {
   const version = "Ver : 0.01 ";
   const dispatch = useDispatch();
 
@@ -33,7 +33,9 @@ const CustomDrawerComponent = (props) => {
           flexDirection: "row",
           justifyContent: "space-between",
         }}
-        onStartShouldSetResponder={() => props.navigation.navigate("adminMain")}
+        onStartShouldSetResponder={() =>
+          props.navigation.navigate("userProfile")
+        }
       >
         <View style={{ justifyContent: "space-around" }}>
           <View
@@ -86,7 +88,7 @@ const CustomDrawerComponent = (props) => {
             icon={() => (
               <MaterialCommunityIcons name="home" size={24} color={"#414241"} />
             )}
-            onPress={({}) => props.navigation.navigate("adminMain")}
+            onPress={({}) => props.navigation.navigate("userProfile")}
           />
           <DrawerItem
             label={"Account"}
@@ -126,4 +128,4 @@ const CustomDrawerComponent = (props) => {
   );
 };
 
-export default CustomDrawerComponent;
+export default UserDrawerCom;

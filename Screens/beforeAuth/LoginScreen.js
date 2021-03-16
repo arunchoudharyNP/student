@@ -5,8 +5,12 @@ import React, {
   useReducer,
   useRef,
 } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Alert } from "react-native";
 import { colors } from "../../constants/style/theme";
+import * as UserActions from "../../Store/Actions/UsersActions";
+import { useDispatch } from "react-redux";
+import firebase, { firestore } from "firebase";
+import firebaseConfig from "../../fireBaseWebConfig";
 
 import {
   Block,
@@ -45,6 +49,9 @@ const formReducer = (state, action) => {
 };
 
 const LoginScreen = (props) => {
+  const db = firestore();
+
+  const dispatch = useDispatch();
   const [error, setError] = useState();
   const [isLoading, setIsloading] = useState(false);
 
@@ -52,12 +59,10 @@ const LoginScreen = (props) => {
     inputValue: {
       userName: "",
       password: "",
-      OTP: "",
     },
     inputValidities: {
       userName: false,
       password: false,
-      OTP: false,
     },
     formIsValid: false,
   });
@@ -92,6 +97,32 @@ const LoginScreen = (props) => {
     [dispatchInput]
   );
 
+  const login = () => {
+    const userRef = db.collection("UserCred");
+
+    userRef
+      .where("userName", "==", formState.inputValue.userName)
+      .where("password", "==", formState.inputValue.password)
+      .get()
+      .then((querySnap) => {
+        if (querySnap.size > 0) {
+          console.log("Data Found");
+
+          dispatch(
+            UserActions.userAuth(
+              props.navigation,
+              formState.inputValue.userName
+            )
+          );
+        } else {
+          Alert.alert(
+            "Please login with correct credential",
+            " Credential not match"
+          );
+        }
+      });
+  };
+
   return (
     <View style={styles.container}>
       <Text
@@ -108,12 +139,10 @@ const LoginScreen = (props) => {
       </Text>
 
       <Input
-        id="username"
+        id="userName"
         required
         LeftValue="user"
         vectorIcon="AntDesign"
-        minLength={10}
-        maxLength={10}
         errorText="Please enter correct username"
         label="User Name"
         placeholder="Enter registered user name "
@@ -152,7 +181,9 @@ const LoginScreen = (props) => {
           startColor={colors.accent}
           endColor={colors.primary}
           style={styles.button}
-          onPress={() => {}}
+          onPress={() => {
+            login();
+          }}
         >
           <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
             Sign In
@@ -172,7 +203,7 @@ const LoginScreen = (props) => {
         startColor={colors.accent}
         endColor={colors.primary}
         style={styles.button}
-        onPress={()=>props.navigation.navigate("signUpScreen")}
+        onPress={() => props.navigation.navigate("signUpScreen")}
       >
         <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
           Sign Up
@@ -184,7 +215,7 @@ const LoginScreen = (props) => {
         startColor={"#107278"}
         endColor={"#03939C"}
         style={styles.button}
-        onPress={()=>props.navigation.navigate("adminLogin")}
+        onPress={() => props.navigation.navigate("adminLogin")}
       >
         <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
           Login as Admin

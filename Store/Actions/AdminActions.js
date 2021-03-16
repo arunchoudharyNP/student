@@ -1,13 +1,18 @@
 import AsyncStorage from "@react-native-community/async-storage";
 
+
 export const ADMIN_AUTH = "ADMIN_AUTH";
 export const LOGOUT = "LOGOUT";
+
 
 export const adminAuth = (navigation, userName, docId) => {
   saveDataToStorage(userName, docId);
   navigation.navigate("verify");
   return { type: ADMIN_AUTH, userName, docId };
 };
+
+
+
 
 export const logout = (navigation) => {
   AsyncStorage.removeItem("adminData");

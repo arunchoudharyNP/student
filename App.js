@@ -9,6 +9,8 @@ import { enableScreens } from "react-native-screens";
 import AppLoading from "expo-app-loading";
 
 import AdminReducers from "./Store/Reducers/AdminReducers";
+import UserAuthReducers from "./Store/Reducers/UserAuthReducers";
+import CreateUsersOTP from "./Store/Reducers/CreateUsersOTP";
 import { Provider as StoreProvider } from "react-redux";
 
 import RootNavigator from "./navigations/RootNavigator";
@@ -20,6 +22,8 @@ enableScreens();
 
 export const reducer = combineReducers({
   AuthAdmin: AdminReducers,
+  UsersOTP: CreateUsersOTP,
+  UserAuthReducers: UserAuthReducers,
 });
 
 const store = createStore(reducer, applyMiddleware(ReduxThunk));
@@ -50,7 +54,7 @@ export default function App() {
     const fontAssets = cacheFonts([
       { "open-sans": require("./assets/fonts/OpenSans-Regular.ttf") },
       { "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf") },
-      {"Caveat" : require('./assets/fonts/Caveat-VariableFont_wght.ttf')}
+      { Caveat: require("./assets/fonts/Caveat-VariableFont_wght.ttf") },
     ]);
 
     return Promise.all([...imageAssets, ...fontAssets]);

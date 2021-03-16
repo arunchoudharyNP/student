@@ -5,6 +5,7 @@ const initialState = {
   docId: null,
 };
 
+
 export default (state = initialState, action) => {
   switch (action.type) {
     case ADMIN_AUTH:
