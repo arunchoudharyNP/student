@@ -12,14 +12,14 @@ const UserProfile = (props) => {
   const { name } = props.route.params;
   const [listners, setlistners] = useState([]);
 
-  const startChat = (id) => {
-    // const chatRef = db
-    //   .collection("ServiceAccount")
-    //   .doc(id)
-    //   .collection(name + "-room");
+  const startChat = (id,chatName) => {
+    const chatRef = db
+      .collection("ServiceAccount")
+      .doc(id)
+      .set({ users: firestore.FieldValue.arrayUnion(name) }, { merge: true });
 
-    // chatRef.doc("ChatRoom");
-    props.navigation.navigate("chatScreen", { id,room:name });
+   
+    props.navigation.navigate("chatScreen", { id, room: name ,name:chatName});
   };
 
   const loadListners = () => {
@@ -62,7 +62,7 @@ const UserProfile = (props) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <CardCom data={listners} chatHandler={(id) => startChat(id)} />
+      <CardCom data={listners} chatHandler={(id,name) => startChat(id,name)} />
     </View>
   );
 };

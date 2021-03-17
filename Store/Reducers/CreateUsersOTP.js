@@ -1,4 +1,8 @@
-import { CREATE_USER_OTP, GET_USER_OTP } from "../Actions/UsersActions";
+import {
+  CREATE_USER_OTP,
+  GET_USER_OTP,
+  SET_LOGIN_COUNT,
+} from "../Actions/UsersActions";
 
 const initialState = {
   OTP: [],
@@ -20,7 +24,8 @@ export default (state = initialState, action) => {
         state.OTP[match].userOTP = state.OTP[match].userOTP.concat(
           action.userOTP
         );
-        console.log(state)
+
+        console.log(state);
 
         return {
           ...state,
@@ -30,13 +35,13 @@ export default (state = initialState, action) => {
           title: action.title,
           count: action.count,
           userOTP: action.userOTP,
-        }
-        console.log(state)
+          login: action.login,
+        };
+        console.log(state);
         return {
           ...state,
           OTP: state.OTP.concat(updatedOTP),
         };
-        
       }
 
     case GET_USER_OTP:
@@ -45,12 +50,29 @@ export default (state = initialState, action) => {
           title: element.title,
           count: element.count,
           userOTP: element.userOTP,
+          login: element.login
         };
       });
 
       return {
         OTP: otp,
       };
+
+    // case SET_LOGIN_COUNT:
+       
+    //   let otp = action.data.map((element) => {
+    //     return {
+    //       title: element.title,
+    //       count: element.count,
+    //       userOTP: element.userOTP,
+    //     };
+    //   });
+
+    //   return {
+    //     OTP: otp,
+    //   };
+
+   
 
     default:
       return state;

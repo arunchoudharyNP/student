@@ -18,7 +18,7 @@ const CardCom = (props) => {
       <TouchableOpacity
         activeOpacity={0.5}
         style={styles.container}
-        onPress={() =>chatHandler(item.ID)}
+        onPress={() =>chatHandler(item.ID,item.Name)}
       >
         <View style={{ flex: 2 }}>
           <Image source={{ uri: item.Picture }} style={styles.image} />

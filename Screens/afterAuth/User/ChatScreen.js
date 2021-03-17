@@ -4,10 +4,13 @@ import { GiftedChat } from "react-native-gifted-chat";
 import { firestore } from "firebase";
 
 const ChatScreen = (props) => {
-  const { id, room } = props.route.params;
+  const { id, room ,name} = props.route.params;
 
   // const id = props.navigation.getParam("id");
   // const room = props.navigation.getParam("room");
+
+ 
+
   console.log(props);
   console.log(id);
   console.log(room);
@@ -21,12 +24,15 @@ const ChatScreen = (props) => {
         .filter(({ type }) => (type = "added"))
         .map(({ doc }) => {
           const message = doc.data();
-          return { ...message,createdAt:message.createdAt.toDate() };
+          return { ...message, createdAt: message.createdAt.toDate() };
         })
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       appendMessages(messageFireStore);
     });
+    props.navigation.setOptions({
+      title:name
+    })
 
     return () => unsubscribe();
   }, []);
@@ -35,23 +41,10 @@ const ChatScreen = (props) => {
     setmessages((prevState) => GiftedChat.append(prevState, msg));
   };
 
-  const [messages, setmessages] = useState([
-    // {
-    //   _id: 1,
-    //   text: "Joined to New Room",
-    //   createdAt: new Date(),
-    //   user: {
-    //     _id: 2,
-    //     name: "React Native",
-    //     // avatar: "https://facebook.github.io/react/img/logo_og.png",
-    //   },
-    // },
-  ]);
+  const [messages, setmessages] = useState([]);
 
   const onSend = async (msg) => {
-    const writes = msg.map((m) =>
-      chatRef.add(m)
-    );
+    const writes = msg.map((m) => chatRef.add(m));
     await Promise.all(writes);
   };
 

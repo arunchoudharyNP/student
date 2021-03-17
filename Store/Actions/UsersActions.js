@@ -2,6 +2,8 @@ export const CREATE_USER_OTP = "CREATE_USER_OTP";
 
 export const GET_USER_OTP = "GET_USER_OTP";
 
+export const SET_LOGIN_COUNT ="SET_LOGIN_COUNT";
+
 
 import AsyncStorage from "@react-native-community/async-storage";
 
@@ -18,6 +20,12 @@ export const getUserOTP = (data) => {
   
   return { type: GET_USER_OTP, data };
 };
+
+
+// export const setLoginCount =(count) =>{
+
+//   return {type : setLoginCount, count}
+// }
 
 
 export const userAuth = (navigation, userName) => {

@@ -6,7 +6,7 @@ import UserCard from "../../../components/admin/UserCard";
 const Users = (props) => {
   const [OTP, setOTP] = useState([]);
   const otp = useSelector((state) => state.UsersOTP.OTP);
-
+ console.log(otp)
  
   useEffect(() => {
     setOTP(otp)

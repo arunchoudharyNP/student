@@ -26,6 +26,7 @@ const AdminProfile = (props) => {
   let resData = [];
   const dispatch = useDispatch();
   const [OTP, setOTP] = useState([]);
+
   const { docId } = props.route.params;
 
   // const OTPs = useSelector((state) => state.UsersOTP.OTP);
@@ -57,6 +58,7 @@ const AdminProfile = (props) => {
         });
 
         dispatch(UserActions.getUserOTP(resData));
+        // dispatch(UserActions.setLoginCount(resData))
         return resData;
       })
       .catch((err) => {
@@ -79,7 +81,7 @@ const AdminProfile = (props) => {
   };
 
   useLayoutEffect(() => {
-    loadOTP();
+    const unsubscribe = loadOTP();
     parent.setOptions({
       headerLeft: () => {
         return (
@@ -97,7 +99,8 @@ const AdminProfile = (props) => {
         );
       },
     });
-  }, [props.navigation]);
+    return () => unsubscribe;
+  }, []);
 
   const renderItem = ({ item }) => {
     return (
@@ -112,8 +115,7 @@ const AdminProfile = (props) => {
               //   ? otpData.find((value) => value.title == item.title).count
               //   : 0
               // item.count
-              item.login ? item.login : 0
-            
+              item.login
             }
             tintColor="#00e0ff"
             backgroundColor="#3d5875"
