@@ -5,12 +5,13 @@ import React, {
   useReducer,
   useRef,
 } from "react";
-import { View, Image, StyleSheet, Alert } from "react-native";
+import { View, Image, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { colors } from "../../constants/style/theme";
 import * as UserActions from "../../Store/Actions/UsersActions";
 import { useDispatch } from "react-redux";
 import firebase, { firestore } from "firebase";
-import firebaseConfig from "../../fireBaseWebConfig";
+import { AntDesign } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 import {
   Block,
@@ -125,17 +126,23 @@ const LoginScreen = (props) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.imageContainer}>
+        <Image
+          style={{ resizeMode: "contain", width: 100, height: 100 }}
+          source={require("../../assets/images/logo_circleDot.png")}
+        />
+      </View>
       <Text
         h1
         bold
-        center
         style={{
-          marginTop: 150,
-          marginBottom: 30,
+          marginTop: 10,
+          marginLeft: 50,
           fontFamily: "open-sans-bold",
+          color: "white",
         }}
       >
-        Login
+        Login as User
       </Text>
 
       <Input
@@ -169,67 +176,97 @@ const LoginScreen = (props) => {
         initiallyValid={false}
       />
 
-      <Text gray2 right style={{ marginRight: 50 }}>
-        {" "}
-        Forget Password?{" "}
-      </Text>
-      {isLoading ? (
-        <ActivityIndicator size="small" color="black" />
-      ) : (
-        <Button
-          gradient
-          startColor={colors.accent}
-          endColor={colors.primary}
-          style={styles.button}
-          onPress={() => {
-            login();
-          }}
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <LinearGradient
+          colors={["#CF406E", "#5D224F"]}
+          locations={[0.1, 0.9]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.signUpButton, { marginLeft: 50 }]}
         >
-          <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-            Sign In
-          </Text>
-        </Button>
-      )}
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("signUpScreen")}
+            style={{ flexDirection: "row" }}
+          >
+            <AntDesign name="arrowleft" size={24} color="white" />
+            <Text
+              style={{
+                color: "white",
+                alignSelf: "center",
+                fontFamily: "open-sans-bold",
+              }}
+            >
+              Sign Up
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+
+        <LinearGradient
+          colors={["#CF406E", "#5D224F"]}
+          locations={[0.1, 0.9]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.signUpButton, { marginRight: 50 }]}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              login();
+            }}
+            style={{ flexDirection: "row" }}
+          >
+            <Text
+              style={{
+                color: "white",
+                alignSelf: "center",
+                fontFamily: "open-sans-bold",
+              }}
+            >
+              Sign In
+            </Text>
+            <AntDesign name="arrowright" size={24} color="white" />
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
 
       <Divider></Divider>
 
-      <Text h6 color="#95A5A6" style={{ alignSelf: "center" }}>
-        {" "}
-        Not Registered{" "}
-      </Text>
-
-      <Button
-        gradient
-        startColor={colors.accent}
-        endColor={colors.primary}
-        style={styles.button}
-        onPress={() => props.navigation.navigate("signUpScreen")}
+      <LinearGradient
+        colors={["#CF406E", "#5D224F"]}
+        locations={[0.1, 0.9]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.AdminButton}
       >
-        <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-          Sign Up
-        </Text>
-      </Button>
-
-      <Button
-        gradient
-        startColor={"#107278"}
-        endColor={"#03939C"}
-        style={styles.button}
-        onPress={() => props.navigation.navigate("adminLogin")}
-      >
-        <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-          Login as Admin
-        </Text>
-      </Button>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("adminLogin")}
+          style={{ flexDirection: "row" }}
+        >
+          <Text
+            style={{
+              color: "white",
+              alignSelf: "center",
+              fontFamily: "open-sans-bold",
+            }}
+          >
+            Login as Admin
+          </Text>
+          <AntDesign name="arrowright" size={24} color="white" />
+        </TouchableOpacity>
+      </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white" },
+  container: { flex: 1, backgroundColor: "black" },
   BGimage: {
     width: "100%",
     height: 180,
+  },
+  imageContainer: {
+    marginTop: 30,
+    marginLeft: 40,
+    paddingTop:10
   },
 
   inputTitle: {
@@ -256,6 +293,23 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     marginHorizontal: 10,
+  },
+
+  signUpButton: {
+    width: 100,
+    alignSelf: "flex-end",
+    justifyContent: "space-between",
+    padding: 10,
+    borderRadius: 20,
+    marginRight: 50,
+  },
+  AdminButton: {
+    backgroundColor: "#CF406E",
+    flexDirection: "row",
+    padding: 10,
+    marginHorizontal: 50,
+    borderRadius: 20,
+    justifyContent: "space-between",
   },
 });
 

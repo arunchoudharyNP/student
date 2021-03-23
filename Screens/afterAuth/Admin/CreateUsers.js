@@ -175,15 +175,16 @@ const CreateUsers = (props) => {
           rounded
           textColor="black"
           iconStyle={{ color: "white" }}
-          rightButtonBackgroundColor="#10356c"
-          leftButtonBackgroundColor="#297a8a"
+          
+          rightButtonBackgroundColor="#5D224F"
+          leftButtonBackgroundColor="#CF406E"
         />
       </View>
 
       <Button
         gradient
-        startColor={"#10356c"}
-        endColor={"#297a8a"}
+        startColor={"#CF406E"}
+        endColor={"#5D224F"}
         style={styles.button}
         onPress={() => {
           Keyboard.dismiss();

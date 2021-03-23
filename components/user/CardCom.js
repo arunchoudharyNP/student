@@ -18,23 +18,33 @@ const CardCom = (props) => {
       <TouchableOpacity
         activeOpacity={0.5}
         style={styles.container}
-        onPress={() =>chatHandler(item.ID,item.Name)}
+        onPress={() => chatHandler(item.ID, item.Name,item.Picture)}
       >
         <View style={{ flex: 2 }}>
           <Image source={{ uri: item.Picture }} style={styles.image} />
         </View>
-        <View style={{ flex: 4 }}>
-          <Text style={styles.textStyle}>{item.Name}</Text>
-          <Text>Proffession Details </Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Ionicons
-            style={styles.chatStyle}
-            name={"chatbox"}
-            color="black"
-            size={32}
-          />
-          <Text style={{ color: "black" }}>Chat</Text>
+
+        <View
+          style={{
+            flex: 8,
+            flexDirection: "row",
+            borderBottomColor: "#D9D9D9",
+            borderBottomWidth: 1,
+          }}
+        >
+          <View style={{ flex: 4 }}>
+            <Text style={styles.textStyle}>{item.Name}</Text>
+            <Text style={{ color: "grey" }}>Proffession Details </Text>
+          </View>
+          <View style={{ flex: 1, justifyContent: "center" }}>
+            <Ionicons
+              style={styles.chatStyle}
+              name={"chatbox-outline"}
+              color="grey"
+              size={32}
+            />
+            <Text style={{ color: "black" }}>Chat</Text>
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -56,31 +66,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 10,
     marginVertical: 2,
-    height: 100,
+    height: 70,
     width: "100%",
-    backgroundColor: "#1AE1C5",
-    elevation: 5,
-    borderRadius: 10,
-    borderColor: "black",
-    borderBottomWidth: 3,
-    borderTopWidth: 3,
+    paddingBottom: 5,
   },
   image: {
     resizeMode: "contain",
-    height: 70,
-    width: 70,
-    padding: 10,
+    height: 55,
+    width: 55,
+    padding: 5,
     borderRadius: 500,
   },
   textStyle: {
     color: "black",
     fontWeight: "700",
-    fontSize: 24,
-    marginBottom: 10,
+    fontSize: 22,
   },
   chatStyle: {
     alignItems: "flex-end",
-    marginTop: 25,
   },
 });
 

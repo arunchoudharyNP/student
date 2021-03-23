@@ -1,9 +1,5 @@
 import React, { useReducer, useEffect, useState } from "react";
-import {
-  StyleSheet,
-  TextInput,
-  View
-} from "react-native";
+import { StyleSheet, TextInput, View } from "react-native";
 import * as Icon from "@expo/vector-icons";
 
 const INPUT_CHANGE = "INPUT_CHANGE";
@@ -35,7 +31,6 @@ const inputReducer = (state, action) => {
 };
 
 function Input(props) {
-  
   const {
     label,
     errorText,
@@ -46,12 +41,12 @@ function Input(props) {
     phone,
     number,
     style,
-    onInputChanges, 
+    onInputChanges,
     id,
-    error
+    error,
   } = props;
 
-  const [ toggleSecure, setToggleSecure] = useState(false);
+  const [toggleSecure, setToggleSecure] = useState(false);
   const isSecure = toggleSecure ? false : secure;
 
   const renderLabel = () => {
@@ -72,7 +67,7 @@ function Input(props) {
     return (
       <Button
         style={styles.toggle}
-        onPress={() => setToggleSecure( !toggleSecure )}
+        onPress={() => setToggleSecure(!toggleSecure)}
       >
         {rightLabel ? (
           rightLabel
@@ -100,10 +95,7 @@ function Input(props) {
     );
   };
 
-  const inputStyles = [
-    styles.input,
-    style,
-  ];
+  const inputStyles = [styles.input, style];
 
   const inputType = email
     ? "email-address"
@@ -118,7 +110,6 @@ function Input(props) {
     isValid: props.initiallyValid,
     touched: false,
   });
-
 
   useEffect(() => {
     onInputChanges(id, inputState.value, inputState.isValid);
@@ -165,6 +156,8 @@ function Input(props) {
         value={inputState.value}
         onChangeText={textChangeHandler}
         onBlur={lostFocusHandler}
+        placeholderTextColor="white"
+        color="white"
         {...props}
       />
       {!inputState.isValid && inputState.touched && (
@@ -176,7 +169,7 @@ function Input(props) {
       {renderToggle()}
     </Block>
   );
-};
+}
 
 const styles = StyleSheet.create({
   input: {
@@ -195,12 +188,14 @@ const styles = StyleSheet.create({
     height: theme.sizes.base * 1.5,
     top: 11,
     right: 50,
+    backgroundColor: "black",
   },
 
   inputTitle: {
     marginLeft: 50,
     lineHeight: 18,
     fontSize: 17,
+    color: "#CF406E",
   },
   leftStyle: {
     position: "absolute",
@@ -212,13 +207,12 @@ const styles = StyleSheet.create({
   },
   errorContainer: {
     marginTop: 5,
-    marginLeft:50
+    marginLeft: 50,
   },
   errorText: {
     color: "red",
     fontSize: 11,
-    opacity:0.5
-    
+    opacity: 0.5,
   },
 });
 

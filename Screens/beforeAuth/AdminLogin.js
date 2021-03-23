@@ -5,12 +5,21 @@ import React, {
   useReducer,
   useCallback,
 } from "react";
-import { View, Image, StyleSheet, Alert, LogBox } from "react-native";
+import {
+  View,
+  Image,
+  StyleSheet,
+  Alert,
+  LogBox,
+  TouchableOpacity,
+} from "react-native";
 import { colors } from "../../constants/style/theme";
 import firebase, { firestore } from "firebase";
 import firebaseConfig from "../../fireBaseWebConfig";
 import { useDispatch } from "react-redux";
 import * as AdminActions from "../../Store/Actions/AdminActions";
+import { LinearGradient } from "expo-linear-gradient";
+import { AntDesign } from "@expo/vector-icons";
 
 import "firebase/firestore";
 
@@ -150,13 +159,19 @@ const AdminLogin = (props) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.imageContainer}>
+        <Image
+          style={{ resizeMode: "contain", width: 100, height: 100 }}
+          source={require("../../assets/images/logo_circleDot.png")}
+        />
+      </View>
       <Text
         h1
         bold
-        center
         style={{
-          marginTop: 150,
-          marginBottom: 30,
+          marginTop: 10,
+          marginLeft: 50,
+          color: "white",
           fontFamily: "open-sans-bold",
         }}
       >
@@ -196,50 +211,69 @@ const AdminLogin = (props) => {
         initiallyValid={false}
       />
 
-      <Text gray2 right style={{ marginRight: 50 }}>
-        {" "}
-        Forget Password?{" "}
-      </Text>
-      {isLoading ? (
-        <ActivityIndicator size="small" color="black" />
-      ) : (
-        <Button
-          gradient
-          startColor={colors.accent}
-          endColor={colors.primary}
-          style={styles.button}
-          onPress={() => {
-            LoginHandler();
-          }}
+      <LinearGradient
+        colors={["#CF406E", "#5D224F"]}
+        locations={[0.1, 0.9]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[styles.signUpButton, { marginLeft: 50 }]}
+      >
+        <TouchableOpacity
+          onPress={() => LoginHandler()}
+          style={{ flexDirection: "row" }}
         >
-          <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-            Sign In
+          <Text
+            style={{
+              color: "white",
+              alignSelf: "center",
+              fontFamily: "open-sans-bold",
+            }}
+          >
+            Login
           </Text>
-        </Button>
-      )}
+          <AntDesign name="arrowright" size={24} color="white" />
+        </TouchableOpacity>
+      </LinearGradient>
 
       <Divider></Divider>
 
-      <Button
-        gradient
-        startColor={"#107278"}
-        endColor={"#03939C"}
-        style={styles.button}
-        onPress={() => props.navigation.navigate("loginScreen")}
+      <LinearGradient
+        colors={["#CF406E", "#5D224F"]}
+        locations={[0.1, 0.9]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.AdminButton}
       >
-        <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-          Login as User
-        </Text>
-      </Button>
+        <TouchableOpacity
+          onPress={() => props.navigation.navigate("loginScreen")}
+          style={{ flexDirection: "row" }}
+        >
+          <Text
+            style={{
+              color: "white",
+              alignSelf: "center",
+              fontFamily: "open-sans-bold",
+            }}
+          >
+            Login as User
+          </Text>
+          <AntDesign name="arrowright" size={24} color="white" />
+        </TouchableOpacity>
+      </LinearGradient>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white" },
+  container: { flex: 1, backgroundColor: "black" },
   BGimage: {
     width: "100%",
     height: 180,
+  },
+  imageContainer: {
+    marginTop: 30,
+    marginLeft: 40,
+    paddingTop:10
   },
 
   inputTitle: {
@@ -266,6 +300,22 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     marginHorizontal: 10,
+  },
+  signUpButton: {
+    width: 100,
+    alignSelf: "flex-end",
+    justifyContent: "space-between",
+    padding: 10,
+    borderRadius: 20,
+    marginRight: 50,
+  },
+  AdminButton: {
+    backgroundColor: "#CF406E",
+    flexDirection: "row",
+    padding: 10,
+    marginHorizontal: 50,
+    borderRadius: 20,
+    justifyContent: "space-between",
   },
 });
 

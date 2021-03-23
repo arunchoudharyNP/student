@@ -6,24 +6,27 @@ import CardCom from "../../../components/user/CardCom";
 import { firestore } from "firebase";
 
 const UserProfile = (props) => {
+
   const db = firestore();
   const parent = props.navigation.dangerouslyGetParent();
 
   const { name } = props.route.params;
   const [listners, setlistners] = useState([]);
 
-  const startChat = (id,chatName) => {
+  const startChat = (id,chatName,picture) => {
     const chatRef = db
       .collection("ServiceAccount")
       .doc(id)
       .set({ users: firestore.FieldValue.arrayUnion(name) }, { merge: true });
 
    
-    props.navigation.navigate("chatScreen", { id, room: name ,name:chatName});
+    props.navigation.navigate("chatScreen", { id, room: name ,name:chatName,picture});
   };
 
   const loadListners = () => {
     const serviceRef = db.collection("ServiceAccount");
+
+  
 
     serviceRef.get().then((snapDoc) => {
       if (snapDoc.size > 0) {
@@ -62,7 +65,7 @@ const UserProfile = (props) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <CardCom data={listners} chatHandler={(id,name) => startChat(id,name)} />
+      <CardCom data={listners} chatHandler={(id,name,picture) => startChat(id,name,picture)} />
     </View>
   );
 };

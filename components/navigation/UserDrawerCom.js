@@ -24,7 +24,7 @@ const UserDrawerCom = (props) => {
   return (
     <View style={{ flex: 1 }}>
       <LinearGradient
-        colors={["#C9FBFE", "#097B7C"]}
+        colors={["black", "black"]}
         start={{ x: 0, y: 0.2 }}
         end={{ x: 0, y: 1 }}
         style={{
@@ -75,7 +75,7 @@ const UserDrawerCom = (props) => {
           style={{ alignSelf: "flex-end", marginBottom: 20, marginRight: 25 }}
         >
           <Image
-            source={require("../../assets/images/appLogo.png")}
+            source={require("../../assets/images/logo_circleDot.png")}
             style={{ resizeMode: "contain", height: 90, width: 60 }}
           />
         </View>

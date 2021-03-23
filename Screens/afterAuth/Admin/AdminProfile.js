@@ -15,6 +15,7 @@ import firebase, { firestore } from "firebase";
 import firebaseConfig from "../../../fireBaseWebConfig";
 import { FlatList } from "react-native-gesture-handler";
 
+
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 if (!firebase.apps.length) {
@@ -35,6 +36,9 @@ const AdminProfile = (props) => {
   });
 
   useEffect(() => {
+     
+
+
     const unsubscribe = props.navigation.addListener("tabPress", () =>
       setOTP(OTPs)
     );
@@ -117,11 +121,11 @@ const AdminProfile = (props) => {
               // item.count
               item.login
             }
-            tintColor="#00e0ff"
-            backgroundColor="#3d5875"
+            tintColor="#CF406E"
+            backgroundColor="black"
           >
             {(fill) => (
-              <Text style={{ fontSize: 22 }}>
+              <Text style={{ fontSize: 22, color: "#CF406E" }}>
                 {fill}/{item.count}
               </Text>
             )}
@@ -153,9 +157,10 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 30,
     borderColor: "black",
-    borderWidth: 1,
+    borderWidth: 3,
     margin: 4,
   },
+
   userContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -165,6 +170,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     textTransform: "uppercase",
     padding: 20,
+    color: "#CF406E",
   },
   gaugeStyle: {},
   refresh: {

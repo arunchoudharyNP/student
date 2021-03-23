@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 
 import { StyleSheet, View, Image, Text } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator, TransitionSpecs } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import DashboardScreen from "../Screens/afterAuth/DashboardScreen";
 import {
@@ -104,9 +104,9 @@ const RootNavigator = (props) => {
       <View style={{ flex: 1, flexDirection: "row" }}>
         <Image
           style={styles.logoImage}
-          source={require("../assets/images/appLogo.png")}
+          source={require("../assets/images/logo_circleDot.png")}
         />
-        <Text style={styles.logoTitle}>Friends</Text>
+        <Text style={styles.logoTitle}>Sain</Text>
       </View>
     );
   };
@@ -176,17 +176,9 @@ const RootNavigator = (props) => {
           component={BottomTabAdmin}
           options={{
             headerTitle: headerLogo,
-            // headerStyle: {
-            //   backgroundColor: "#044b59",
-            // },
-            headerBackground: () => (
-              <LinearGradient
-                colors={["#297a8a", "#10356c"]}
-                style={{ flex: 1 }}
-                start={{ x: 0, y: 0.2 }}
-                end={{ x: 0, y: 1 }}
-              />
-            ),
+            headerStyle: {
+              backgroundColor: "black",
+            },
           }}
         />
       </AdminHome.Navigator>
@@ -195,7 +187,12 @@ const RootNavigator = (props) => {
 
   const AuthStack = () => {
     return (
-      <RootNav.Navigator initialRouteName="welcomeScreen">
+      <RootNav.Navigator
+        initialRouteName="welcomeScreen"
+        screenOptions={{
+          animationEnabled: false,
+        }}
+      >
         <RootNav.Screen
           options={{ headerShown: false }}
           name="welcomeScreen"
@@ -215,11 +212,6 @@ const RootNavigator = (props) => {
           options={{ headerShown: false }}
           name="adminLogin"
           component={AdminLogin}
-        />
-        <RootNav.Screen
-          options={{ headerShown: false }}
-          name="adminProfile"
-          component={AdminProfile}
         />
         <RootNav.Screen
           options={{ headerShown: false }}
@@ -285,12 +277,11 @@ const RootNavigator = (props) => {
         <UserStack.Screen
           component={UserTabNavigation}
           name="userProfile"
-         
           options={{
             headerShown: true,
             headerTitle: headerLogo,
             headerStyle: {
-              backgroundColor: "#044b59",
+              backgroundColor: "black",
             },
           }}
         />
@@ -357,17 +348,19 @@ const RootNavigator = (props) => {
 const styles = StyleSheet.create({
   logoImage: {
     resizeMode: "contain",
-    height: 55,
-    width: 40,
-    marginLeft: 35,
+    height: 50,
+    width: 50,
+    marginLeft: 10,
     marginRight: 10,
   },
   logoTitle: {
-    fontSize: 28,
+    fontSize: 32,
+    width: 60,
     fontWeight: "500",
     fontFamily: "Caveat",
     color: "white",
     marginTop: 10,
+    lineHeight: 40,
     textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 1,

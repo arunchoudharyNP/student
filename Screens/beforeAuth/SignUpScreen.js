@@ -16,8 +16,9 @@ import {
   Divider,
 } from "../../components/helpingComponents";
 import firebase, { firestore } from "firebase";
-import firebaseConfig from "../../fireBaseWebConfig";
-import { ScrollView } from "react-native-gesture-handler";
+import { AntDesign } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 
 const FORM_INPUT_UPDTAE = "FORM_INPUT_UPDATE";
 
@@ -177,142 +178,185 @@ const SignUpScreen = (props) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text
-        h1
-        bold
-        center
-        style={{
-          marginTop: 60,
-          marginBottom: 30,
-          fontFamily: "open-sans-bold",
-        }}
-      >
-        Sign Up
-      </Text>
+      <View>
+        <View style={styles.imageContainer}>
+          <Image
+            style={{ resizeMode: "contain", width: 100, height: 100 }}
+            source={require("../../assets/images/logo_circleDot.png")}
+          />
+        </View>
 
-      <Input
-        id="userName"
-        required
-        LeftValue="user"
-        vectorIcon="AntDesign"
-        errorText="Please enter correct username"
-        label="User Name"
-        placeholder="Enter any username name "
-        style={styles.inputFeild}
-        onInputChanges={signupHandler}
-        initialValue=""
-        initiallyValid={false}
-      />
-
-      <Input
-        id="password"
-        required
-        minLength={5}
-        errorText="Please enter a valid password"
-        LeftValue="unlock"
-        vectorIcon="Feather"
-        password
-        secure
-        label="Password"
-        placeholder="Type your password"
-        style={styles.inputFeild}
-        onInputChanges={signupHandler}
-        initialValue=""
-        initiallyValid={false}
-      />
-
-      <Input
-        id="ID"
-        required
-        errorText="Please enter a valid ID"
-        LeftValue="unlock"
-        vectorIcon="Feather"
-        label="ID"
-        placeholder="Type your ID"
-        style={styles.inputFeild}
-        onInputChanges={signupHandler}
-        initialValue=""
-        initiallyValid={false}
-      />
-
-      <Input
-        id="OTP"
-        required
-        minLength={5}
-        errorText="Please enter a valid OTP"
-        LeftValue="unlock"
-        vectorIcon="Feather"
-        password
-        secure
-        label="OTP"
-        placeholder="Type your OTP"
-        style={styles.inputFeild}
-        onInputChanges={signupHandler}
-        initialValue=""
-        initiallyValid={false}
-      />
-
-      <Text gray2 right style={{ marginRight: 50 }}>
-        {" "}
-        Forget Password?{" "}
-      </Text>
-      {isLoading ? (
-        <ActivityIndicator size="small" color="black" />
-      ) : (
-        <Button
-          gradient
-          startColor={colors.accent}
-          endColor={colors.primary}
-          style={styles.button}
-          onPress={() => {
-            formState.inputValue.OTP && signUP();
+        <Text
+          h1
+          bold
+          style={{
+            marginTop: 10,
+            marginLeft: 50,
+            fontFamily: "open-sans-bold",
+            color: "white",
           }}
         >
-          <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-            Sign Up
-          </Text>
-        </Button>
-      )}
-
-      <Divider></Divider>
-
-      <Text h6 color="#95A5A6" style={{ alignSelf: "center" }}>
-        {" "}
-        Already Registered{" "}
-      </Text>
-
-      <Button
-        gradient
-        startColor={colors.accent}
-        endColor={colors.primary}
-        style={styles.button}
-        onPress={() => props.navigation.navigate("loginScreen")}
-      >
-        <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-          Sign In
+          Sign Up
         </Text>
-      </Button>
 
-      <Button
-        gradient
-        startColor={"#107278"}
-        endColor={"#03939C"}
-        style={styles.button}
-        onPress={() => props.navigation.navigate("adminLogin")}
-      >
-        <Text bold white center style={{ fontFamily: "open-sans-bold" }}>
-          Login as Admin
-        </Text>
-      </Button>
+        <Input
+          id="userName"
+          required
+          LeftValue="user"
+          vectorIcon="AntDesign"
+          errorText="Please enter correct username"
+          label="User Name"
+          placeholder="Enter any imaginative name"
+          style={styles.inputFeild}
+          onInputChanges={signupHandler}
+          initialValue=""
+          initiallyValid={false}
+        />
+
+        <Input
+          id="ID"
+          required
+          errorText="Please enter a valid ID"
+          LeftValue="idcard"
+          vectorIcon="Feather"
+          label="ID"
+          placeholder="Type your ID"
+          style={styles.inputFeild}
+          onInputChanges={signupHandler}
+          initialValue=""
+          initiallyValid={false}
+        />
+
+        <Input
+          id="password"
+          required
+          minLength={5}
+          errorText="Please enter a valid password"
+          LeftValue="unlock"
+          vectorIcon="Feather"
+          password
+          secure
+          label="Password"
+          placeholder="Type your password"
+          style={styles.inputFeild}
+          onInputChanges={signupHandler}
+          initialValue=""
+          initiallyValid={false}
+        />
+
+        <Input
+          id="OTP"
+          required
+          minLength={5}
+          errorText="Please enter a valid OTP"
+          LeftValue="unlock"
+          vectorIcon="Feather"
+          password
+          secure
+          label="OTP"
+          placeholder="Type your OTP"
+          style={styles.inputFeild}
+          onInputChanges={signupHandler}
+          initialValue=""
+          initiallyValid={false}
+        />
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <LinearGradient
+            colors={["#CF406E", "#5D224F"]}
+            locations={[0.1, 0.9]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.signUpButton, { marginLeft: 50 }]}
+          >
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate("loginScreen")}
+              style={{ flexDirection: "row" }}
+            >
+              <AntDesign name="arrowleft" size={24} color="white" />
+              <Text
+                style={{
+                  color: "white",
+                  alignSelf: "center",
+                  fontFamily: "open-sans-bold",
+                }}
+              >
+                Sign In
+              </Text>
+            </TouchableOpacity>
+          </LinearGradient>
+
+          <LinearGradient
+            colors={["#CF406E", "#5D224F"]}
+            locations={[0.1, 0.9]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={[styles.signUpButton, { marginRight: 50 }]}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                formState.inputValue.OTP && signUP();
+              }}
+              style={{ flexDirection: "row" }}
+            >
+              <Text
+                style={{
+                  color: "white",
+                  alignSelf: "center",
+                  fontFamily: "open-sans-bold",
+                }}
+              >
+                Sign Up
+              </Text>
+              <AntDesign name="arrowright" size={24} color="white" />
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
+
+        <Divider></Divider>
+
+        <LinearGradient
+          colors={["#CF406E", "#5D224F"]}
+          locations={[0.1, 0.9]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.AdminButton}
+        >
+          <TouchableOpacity
+            onPress={() => props.navigation.navigate("adminLogin")}
+            style={{ flexDirection: "row" }}
+          >
+            <Text
+              style={{
+                color: "white",
+                alignSelf: "center",
+                fontFamily: "open-sans-bold",
+              }}
+            >
+              Login as Admin
+            </Text>
+            <AntDesign
+              name="arrowright"
+              size={24}
+              color="white"
+              style={{ alignContent: "flex-end" }}
+            />
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "white" },
+  container: { flex: 1, backgroundColor: "black" },
   BGimage: {
     width: "100%",
     height: 180,
+  },
+  imageContainer: {
+    marginTop: 30,
+    marginLeft: 40,
+    paddingTop: 10,
   },
 
   inputTitle: {
@@ -339,6 +383,19 @@ const styles = StyleSheet.create({
     height: 35,
     width: 35,
     marginHorizontal: 10,
+  },
+  signUpButton: {
+    width: 100,
+    alignSelf: "flex-end",
+    justifyContent: "space-between",
+    padding: 10,
+    borderRadius: 20,
+    marginRight: 50,
+  },
+  AdminButton: {
+    padding: 10,
+    marginHorizontal: 50,
+    borderRadius: 20,
   },
 });
 
