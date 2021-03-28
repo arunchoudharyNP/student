@@ -19,13 +19,11 @@ const ChatScreen = (props) => {
   let messageFireStore = [];
   let storeMesseges = [];
 
-  // const [currentMessageId, setcurrentMessageId] = useState("");
-
   useEffect(() => {
-    init(name)
+    init(name + room)
       .then(() => {
         console.log("DB Initialized");
-        dispatch(ChatActions.loadMessages(name));
+        dispatch(ChatActions.loadMessages(name + room));
       })
       .catch((err) => {
         console.log("DB initialization failed " + err);
@@ -61,9 +59,6 @@ const ChatScreen = (props) => {
 
   const dispatch = useDispatch();
   const [messages, setmessages] = useState([]);
-
-  // const id = props.navigation.getParam("id");
-  // const room = props.navigation.getParam("room");
 
   const db = firestore();
   const chatRef = db.collection("ServiceAccount").doc(id).collection(room);
@@ -108,26 +103,15 @@ const ChatScreen = (props) => {
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       if (messageFireStore.length) {
-        if (
-          storeMesseges.length > 0 &&
-          // storeMesseges.findIndex(
-          //   (data) =>
-          //     data._id == messageFireStore[messageFireStore.length - 1]._id
-          // ) == -1
-          !checkMessages(messageFireStore)
-        ) {
+        if (storeMesseges && !checkMessages(messageFireStore)) {
           console.log("Called");
 
           messageFireStore.forEach((data) => {
-            dispatch(ChatActions.addMessage(data, name));
+            dispatch(ChatActions.addMessage(data, name + room));
           });
 
           // console.log(currentMessage);
-          if (
-            currentMessageId &&
-            currentMessageId.current !==
-              messageFireStore[messageFireStore.length - 1]._id
-          ) {
+          if (messageFireStore[messageFireStore.length - 1].user._id == 2) {
             chatRef.get().then((data) => {
               data.forEach((doc) => {
                 doc.ref.delete();
@@ -140,7 +124,6 @@ const ChatScreen = (props) => {
           // console.log(currentMessage);
         }
       }
-
       appendMessages(messageFireStore);
     });
     props.navigation.setOptions({
@@ -163,20 +146,14 @@ const ChatScreen = (props) => {
   };
 
   const onSend = async (msg) => {
-    // console.log(msg[0]._id);
-    // setcurrentMessageId(msg[0]._id);
-
     const writes = msg.map((m) => {
-      // setcurrentMessageId(m._id);
       currentMessageId.current = m._id;
       const encryptText = AES.encrypt(m.text, m._id).toString();
       m.text = encryptText;
-      // console.log(m);
 
       chatRef.add(m);
     });
 
-    // const setMessage = dispatch(ChatActions.addMessage(msg[0], name));
     await Promise.all(writes);
   };
 

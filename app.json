@@ -2,13 +2,15 @@
   "expo": {
     "name": "Student App",
     "slug": "Student",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/appIcon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "justifyContent": "center",
+      "alignContent": "center"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
