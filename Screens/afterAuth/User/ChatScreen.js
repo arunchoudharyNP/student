@@ -21,9 +21,40 @@ const ChatScreen = (props) => {
 
   // const [currentMessageId, setcurrentMessageId] = useState("");
 
-  const currentMessageId = useRef("Dummy");
+  useEffect(() => {
+    init(name)
+      .then(() => {
+        console.log("DB Initialized");
+        dispatch(ChatActions.loadMessages(name));
+      })
+      .catch((err) => {
+        console.log("DB initialization failed " + err);
+      });
+  }, []);
 
-  storeMesseges = useSelector((state) => state.ChatReducers.messages);
+  storeMesseges = useSelector((state) =>
+    state.ChatReducers.messages
+      ? state.ChatReducers.messages
+      : [
+          {
+            _id: "Dummy_Bot_Welcome_message",
+            createdAt: new Date(),
+            text: "Hello, Welcome to the Sane App. Send hello to your friend.",
+            user: {
+              _id: 3,
+              name: "Bot",
+            },
+          },
+        ]
+  );
+
+  const currentMessageId = useRef(
+    storeMesseges.length > 0
+      ? storeMesseges.sort(
+          (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+        )[storeMesseges.length - 1]._id
+      : "Dummy"
+  );
 
   console.log("storeMessages");
   console.log(storeMesseges);
@@ -46,16 +77,20 @@ const ChatScreen = (props) => {
     );
   };
 
-  useEffect(() => {
-    init(name)
-      .then(() => {
-        console.log("DB Initialized");
-        dispatch(ChatActions.loadMessages(name));
-      })
-      .catch((err) => {
-        console.log("DB initialization failed " + err);
-      });
-  }, []);
+  const checkMessages = (messageFireStore) => {
+    let flag = true;
+    messageFireStore.forEach((data) => {
+      const exist = storeMesseges.findIndex((msg) => msg._id == data._id);
+
+      if (exist < 0) {
+        flag = false;
+        return flag;
+      }
+
+      return flag;
+    });
+    return flag;
+  };
 
   useEffect(() => {
     const unsubscribe = chatRef.onSnapshot((querySnapShot) => {
@@ -74,11 +109,12 @@ const ChatScreen = (props) => {
 
       if (messageFireStore.length) {
         if (
-          storeMesseges &&
-          storeMesseges.findIndex(
-            (data) =>
-              data._id == messageFireStore[messageFireStore.length - 1]._id
-          ) == -1
+          storeMesseges.length > 0 &&
+          // storeMesseges.findIndex(
+          //   (data) =>
+          //     data._id == messageFireStore[messageFireStore.length - 1]._id
+          // ) == -1
+          !checkMessages(messageFireStore)
         ) {
           console.log("Called");
 
@@ -117,7 +153,9 @@ const ChatScreen = (props) => {
       headerTitle: headerLogo(),
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const appendMessages = (msg) => {
@@ -127,6 +165,7 @@ const ChatScreen = (props) => {
   const onSend = async (msg) => {
     // console.log(msg[0]._id);
     // setcurrentMessageId(msg[0]._id);
+
     const writes = msg.map((m) => {
       // setcurrentMessageId(m._id);
       currentMessageId.current = m._id;

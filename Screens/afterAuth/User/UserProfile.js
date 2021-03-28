@@ -2,10 +2,15 @@ import React, { useLayoutEffect, useState } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CardCom from "../../../components/user/CardCom";
+import * as ChatActions from "../../../Store/Actions/ChatActions";
+import { useDispatch, useSelector } from "react-redux";
+
+import init from "../../../components/Helper/db";
 
 import { firestore } from "firebase";
 
 const UserProfile = (props) => {
+  const dispatch = useDispatch();
 
   const db = firestore();
   const parent = props.navigation.dangerouslyGetParent();
@@ -13,20 +18,31 @@ const UserProfile = (props) => {
   const { name } = props.route.params;
   const [listners, setlistners] = useState([]);
 
-  const startChat = (id,chatName,picture) => {
+  const startChat = (id, chatName, picture) => {
+    // init(name)
+    //   .then(() => {
+    //     console.log("DB Initialized");
+    //     dispatch(ChatActions.loadMessages(name));
+    //   })
+    //   .catch((err) => {
+    //     console.log("DB initialization failed " + err);
+    //   });
+
     const chatRef = db
       .collection("ServiceAccount")
       .doc(id)
       .set({ users: firestore.FieldValue.arrayUnion(name) }, { merge: true });
 
-   
-    props.navigation.navigate("chatScreen", { id, room: name ,name:chatName,picture});
+    props.navigation.navigate("chatScreen", {
+      id,
+      room: name,
+      name: chatName,
+      picture,
+    });
   };
 
   const loadListners = () => {
     const serviceRef = db.collection("ServiceAccount");
-
-  
 
     serviceRef.get().then((snapDoc) => {
       if (snapDoc.size > 0) {
@@ -65,7 +81,10 @@ const UserProfile = (props) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <CardCom data={listners} chatHandler={(id,name,picture) => startChat(id,name,picture)} />
+      <CardCom
+        data={listners}
+        chatHandler={(id, name, picture) => startChat(id, name, picture)}
+      />
     </View>
   );
 };

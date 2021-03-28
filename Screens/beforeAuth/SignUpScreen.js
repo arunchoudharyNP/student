@@ -114,7 +114,7 @@ const SignUpScreen = (props) => {
                   userName: formState.inputValue.userName,
                   password: formState.inputValue.password,
                   ID: formState.inputValue.ID,
-                  OTP: formState.inputValue.OTP,
+                  // OTP: formState.inputValue.OTP,
                 });
                 Alert.alert("Successfully Registered", "Click Ok to Login", [
                   {
