@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { Button } from "../helpingComponents";
 
@@ -18,7 +19,7 @@ const CardCom = (props) => {
       <TouchableOpacity
         activeOpacity={0.5}
         style={styles.container}
-        onPress={() => chatHandler(item.ID, item.Name,item.Picture)}
+        onPress={() => chatHandler(item.ID, item.Name, item.Picture)}
       >
         <View style={{ flex: 2 }}>
           <Image source={{ uri: item.Picture }} style={styles.image} />
@@ -56,6 +57,12 @@ const CardCom = (props) => {
         data={data}
         keyExtractor={(item) => item.ID}
         renderItem={({ item }) => renderData(item)}
+        refreshControl={
+          <RefreshControl
+            refreshing={props.refreshing}
+            onRefresh={props.onRefresh}
+          />
+        }
       />
     </View>
   );

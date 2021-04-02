@@ -1,16 +1,33 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useRef, useEffect } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import CardCom from "../../../components/user/CardCom";
 import * as ChatActions from "../../../Store/Actions/ChatActions";
 import { useDispatch, useSelector } from "react-redux";
+import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
 
 import init from "../../../components/Helper/db";
 
 import { firestore } from "firebase";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+    number: 5,
+  }),
+});
+
 const UserProfile = (props) => {
   const dispatch = useDispatch();
+
+  const [refreshing, setrefreshing] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const db = firestore();
   const parent = props.navigation.dangerouslyGetParent();
@@ -19,17 +36,7 @@ const UserProfile = (props) => {
   const [listners, setlistners] = useState([]);
 
   const startChat = (id, chatName, picture) => {
-    // init(name)
-    //   .then(() => {
-    //     console.log("DB Initialized");
-    //     dispatch(ChatActions.loadMessages(name));
-    //   })
-    //   .catch((err) => {
-    //     console.log("DB initialization failed " + err);
-    //   });
-
-    const chatRef = db
-      .collection("ServiceAccount")
+    db.collection("ServiceAccount")
       .doc(id)
       .set({ users: firestore.FieldValue.arrayUnion(name) }, { merge: true });
 
@@ -38,10 +45,12 @@ const UserProfile = (props) => {
       room: name,
       name: chatName,
       picture,
+      expoPushToken,
     });
   };
 
   const loadListners = () => {
+    setrefreshing(true);
     const serviceRef = db.collection("ServiceAccount");
 
     serviceRef.get().then((snapDoc) => {
@@ -53,11 +62,67 @@ const UserProfile = (props) => {
             Picture: element.data().Picture,
           };
         });
-
+        setrefreshing(false);
         setlistners(resData);
       }
     });
   };
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    // notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+    //   setNotification(notification);
+    // });
+
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      // Notifications.dismissAllNotificationsAsync();
+      console.log(response);
+    });
+
+    // return () => {
+    //   Notifications.removeNotificationSubscription(notificationListener.current);
+    //   Notifications.removeNotificationSubscription(responseListener.current);
+    // };
+  }, []);
+
+  const registerForPushNotificationsAsync = async () => {
+    let token;
+    if (Constants.isDevice) {
+      const {
+        status: existingStatus,
+      } = await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
+  };
+
   useLayoutEffect(() => {
     loadListners();
     parent.setOptions({
@@ -83,6 +148,10 @@ const UserProfile = (props) => {
     <View style={{ flex: 1, backgroundColor: "white" }}>
       <CardCom
         data={listners}
+        onRefresh={() => {
+          loadListners();
+        }}
+        refreshing={refreshing}
         chatHandler={(id, name, picture) => startChat(id, name, picture)}
       />
     </View>

@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 import { StyleSheet, Image, SafeAreaView } from "react-native";
 
@@ -18,7 +18,7 @@ import RootNavigator from "./navigations/RootNavigator";
 
 import { createStore, combineReducers, applyMiddleware } from "redux";
 import ReduxThunk from "redux-thunk";
-import init from "./components/Helper/db";
+
 
 enableScreens();
 
@@ -35,6 +35,8 @@ const store = createStore(reducer, applyMiddleware(ReduxThunk));
 
 export default function App() {
   const [loadState, setloadState] = useState(false);
+
+
 
   function cacheImages(images) {
     return images.map((image) => {
@@ -68,6 +70,10 @@ export default function App() {
 
     return Promise.all([...imageAssets, ...fontAssets]);
   };
+
+
+
+ 
 
   if (!loadState) {
     return (

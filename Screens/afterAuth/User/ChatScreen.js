@@ -15,7 +15,7 @@ import init from "../../../components/Helper/db";
 import CryptoJS, { AES } from "crypto-js";
 
 const ChatScreen = (props) => {
-  const { id, room, name, picture } = props.route.params;
+  const { id, room, name, picture, expoPushToken } = props.route.params;
   let messageFireStore = [];
   let storeMesseges = [];
 
@@ -87,6 +87,55 @@ const ChatScreen = (props) => {
     return flag;
   };
 
+  async function sendPushNotification(number) {
+    const message = {
+      to: expoPushToken,
+      sound: "default",
+      title: "New Messages",
+      body: `You have ${number} new messages from ${name}`,
+      data: { someData: "goes here" },
+    };
+
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
+  // useEffect(() => {
+  //   chatRef.onSnapshot((querySnapShot) => {
+  //     messageFireStore = querySnapShot
+  //       .docChanges()
+  //       .filter(({ type }) => type == "added")
+  //       .map(({ doc }) => {
+  //         let message = doc.data();
+  //         const text = AES.decrypt(message.text, message._id).toString(
+  //           CryptoJS.enc.Utf8
+  //         );
+  //         message.text = text;
+  //         return { ...message, createdAt: message.createdAt.toDate() };
+  //       })
+  //       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+  //     if (messageFireStore.length) {
+  //       let number = 0;
+  //       messageFireStore.forEach((data) => {
+  //         if (data.user._id == 2) {
+  //           number = number + 1;
+  //         }
+  //       });
+  //       if (number) {
+  //         sendPushNotification(number);
+  //       }
+  //     }
+  //   });
+  // }, []);
+
   useEffect(() => {
     const unsubscribe = chatRef.onSnapshot((querySnapShot) => {
       messageFireStore = querySnapShot
@@ -119,6 +168,10 @@ const ChatScreen = (props) => {
             });
 
             console.log("delete");
+          }
+          else {
+             
+            
           }
 
           // console.log(currentMessage);
